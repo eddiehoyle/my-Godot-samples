@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://demos/state_machine/entity.png" type="Texture" id=1]
+[ext_resource path="res://demos/state_machine/Entity.gd" type="Script" id=2]
+[ext_resource path="res://demos/state_machine/states/move.gd" type="Script" id=3]
+[ext_resource path="res://demos/state_machine/states/idle.gd" type="Script" id=4]
+[ext_resource path="res://addons/state_machine/state_machine.gd" type="Script" id=5]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 15, 10 )
+
+[node name="Entity" type="KinematicBody2D"]
+script = ExtResource( 2 )
+
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource( 5 )
+start_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource( 4 )
+
+[node name="Move" type="Node" parent="StateMachine"]
+script = ExtResource( 3 )
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2( 0, -11 )
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 0, -24 )
+texture = ExtResource( 1 )
