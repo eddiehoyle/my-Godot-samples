@@ -2,7 +2,7 @@ extends Node
 class_name State
 
 # warning-ignore:unused_signal
-signal finished(next_state_name)
+signal next(next_state_name)
 
 
 # Called by the state machine upon changing the active state.

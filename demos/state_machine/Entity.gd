@@ -8,7 +8,7 @@ export(float) var air_acceleration = 200
 export(float) var friction = 1200
 export(float) var air_friction = 800
 export(float) var jump_power = 220
-export(float) var gravity = 600
+export(float) var gravity = -600
 
 onready var pivot = $Pivot
 

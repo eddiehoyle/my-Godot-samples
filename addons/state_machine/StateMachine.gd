@@ -2,13 +2,11 @@ extends Node
 class_name StateMachine
 
 signal state_changed(current_state)
-signal state_ready(state)
 
 export(NodePath) var start_state
 
 onready var states_map = {}
 
-var states_stack: Array = []
 var current_state: State = null
 var _active = false setget set_active
 
@@ -24,21 +22,12 @@ func _ready():
 
 	for state_name in states_map:
 		var state = states_map[state_name]
-		var err: int = 0
-		err = state.connect("finished", self, "_change_state")
-		assert(err == 0, "Error [%s] connecting state: '%s.finished' to '%s._change_state'" % [err, state.get_path(), self.get_path()])
-#		err  = state.connect("push", self, "_push_state")
-#		assert(err == 0, "Error [%s] connecting state: '%s.push' to '%s._push_state'" % [err, state.get_path(), self.get_path()])
-#		err = state.connect("pop", self, "_pop_state")
-#		assert(err == 0, "Error [%s] connecting state: '%s.pop' to '%s._pop_state'" % [err, state.get_path(), self.get_path()])
+		var err: int = state.connect("next", self, "_change_state")
+		assert(err == 0, "Error [%s] connecting state: '%s.next' to '%s._change_state'" % [err, state.get_path(), self.get_path()])
+
 	
-	initialize(start_state)
-
-
-func initialize(initial_state: State):
 	set_active(true)
-	states_stack.push_front(initial_state)
-	current_state = states_stack[0] as State
+	current_state = start_state as State
 	current_state.enter()
 
 
@@ -47,7 +36,6 @@ func set_active(value):
 	set_physics_process(value)
 	set_process_input(value)
 	if not _active:
-		states_stack = []
 		current_state = null
 
 
@@ -63,24 +51,14 @@ func _process(delta):
 	current_state.update(delta)
 
 
-
 func _change_state(state_name: String):
 	if not _active:
 		return
-	current_state.exit()
 	assert(state_name in states_map, "Entity '%s' state '%s' not found! Available: %s" % [self.get_path(), state_name, states_map.keys()])
+	current_state.exit()
 	
-	# This is a stack
-#	if state_name == "previous":
-#		states_stack.pop_front()
-#	else:
-#		states_stack[0] = states_map[state_name]
-	
-	# This assumes explicit (no stack, only 1 state)
-	states_stack[0] = states_map[state_name]
-
-	current_state = states_stack[0]
+	current_state = states_map[state_name]
+	current_state.enter()
 	emit_signal("state_changed", current_state)
 	
-	current_state.enter()
 
