@@ -1,16 +1,11 @@
-extends EntityState
+extends EntityMotionState
 
 
-func get_input_direction() -> Vector2:
-	return Vector2(
-		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
-		Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
-	)
-
-func handle_input(_event: InputEvent) -> void:
-	var input_direction = get_input_direction()
-	if input_direction:
+func handle_input(event: InputEvent) -> void:
+	var input_vector = get_input_vector()
+	if input_vector:
 		emit_signal("finished", "Move")
+	.handle_input(event)
 	
 
 func physics_update(delta: float) -> void:

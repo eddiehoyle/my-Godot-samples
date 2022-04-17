@@ -5,8 +5,8 @@ extends EditorPlugin
 func _enter_tree():
 	# Initialization of the plugin goes here.
 	# Add the new type with a name, a parent type, a script and an icon.
-	add_custom_type("StateMachine", "Node", preload("state_machine.gd"), preload("state_machine_icon.png"))
-	add_custom_type("State", "Node", preload("state.gd"), preload("state_icon.png"))
+	add_custom_type("StateMachine", "Node", preload("StateMachine.gd"), preload("state_machine_icon.png"))
+	add_custom_type("State", "Node", preload("State.gd"), preload("state_icon.png"))
 
 
 func _exit_tree():

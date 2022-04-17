@@ -24,15 +24,20 @@ func _ready():
 
 	for state_name in states_map:
 		var state = states_map[state_name]
-		var err: int = state.connect("finished", self, "_change_state")
+		var err: int = 0
+		err = state.connect("finished", self, "_change_state")
 		assert(err == 0, "Error [%s] connecting state: '%s.finished' to '%s._change_state'" % [err, state.get_path(), self.get_path()])
+#		err  = state.connect("push", self, "_push_state")
+#		assert(err == 0, "Error [%s] connecting state: '%s.push' to '%s._push_state'" % [err, state.get_path(), self.get_path()])
+#		err = state.connect("pop", self, "_pop_state")
+#		assert(err == 0, "Error [%s] connecting state: '%s.pop' to '%s._pop_state'" % [err, state.get_path(), self.get_path()])
 	
 	initialize(start_state)
 
 
-func initialize(initial_state: NodePath):
+func initialize(initial_state: State):
 	set_active(true)
-	states_stack.push_front(get_node(initial_state))
+	states_stack.push_front(initial_state)
 	current_state = states_stack[0] as State
 	current_state.enter()
 
@@ -56,13 +61,31 @@ func _physics_process(delta):
 
 func _process(delta):
 	current_state.update(delta)
+
+
+#func _push_state(state_name: String) -> void:
+#	print("_push_state")
+#	if not _active:
+#		return
+#
+#	assert(state_name in states_map, "Entity '%s' state '%s' not found! Available: %s" % [self.get_path(), state_name, states_map.keys()])
+#	states_stack.push_front(states_map[state_name])
+#
+#	current_state = states_stack[0]
+#	emit_signal("state_changed", current_state)
+#
+#
+#func _pop_state() -> void:
+#	print("_pop_state")
+#	if not _active:
+#		return
+#
+#	states_stack.pop_front()
+#
+#	current_state = states_stack[0]
+#	emit_signal("state_changed", current_state)
 	
-
-func _on_animation_finished(anim_name):
-	if not _active:
-		return
-	current_state._on_animation_finished(anim_name)
-
+	
 
 func _change_state(state_name: String):
 	if not _active:
@@ -70,13 +93,11 @@ func _change_state(state_name: String):
 	current_state.exit()
 	assert(state_name in states_map, "Entity '%s' state '%s' not found! Available: %s" % [self.get_path(), state_name, states_map.keys()])
 
-	if state_name == "previous":
-		states_stack.pop_front()
-	else:
-		states_stack[0] = states_map[state_name]
+	states_stack[0] = states_map[state_name]
 
 	current_state = states_stack[0]
+	print("current_state: %s" % [current_state])
 	emit_signal("state_changed", current_state)
+	
+	current_state.enter()
 
-	if state_name != "previous":
-		current_state.enter()
