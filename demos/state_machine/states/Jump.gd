@@ -47,6 +47,7 @@ func physics_update(delta: float) -> void:
 	#
 	#		Suppose user stops pressing move after jump:
 	#			move (transtion) jump (pop) move (transtion) idle
+	#											 ^ requires tick
 	#
 	#		I don't know if a stack works better when state maps get
 	#		complex, so I'm going to pick explicit over stack for now.

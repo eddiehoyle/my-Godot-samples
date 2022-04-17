@@ -63,40 +63,23 @@ func _process(delta):
 	current_state.update(delta)
 
 
-#func _push_state(state_name: String) -> void:
-#	print("_push_state")
-#	if not _active:
-#		return
-#
-#	assert(state_name in states_map, "Entity '%s' state '%s' not found! Available: %s" % [self.get_path(), state_name, states_map.keys()])
-#	states_stack.push_front(states_map[state_name])
-#
-#	current_state = states_stack[0]
-#	emit_signal("state_changed", current_state)
-#
-#
-#func _pop_state() -> void:
-#	print("_pop_state")
-#	if not _active:
-#		return
-#
-#	states_stack.pop_front()
-#
-#	current_state = states_stack[0]
-#	emit_signal("state_changed", current_state)
-	
-	
 
 func _change_state(state_name: String):
 	if not _active:
 		return
 	current_state.exit()
 	assert(state_name in states_map, "Entity '%s' state '%s' not found! Available: %s" % [self.get_path(), state_name, states_map.keys()])
-
+	
+	# This is a stack
+#	if state_name == "previous":
+#		states_stack.pop_front()
+#	else:
+#		states_stack[0] = states_map[state_name]
+	
+	# This assumes explicit (no stack, only 1 state)
 	states_stack[0] = states_map[state_name]
 
 	current_state = states_stack[0]
-	print("current_state: %s" % [current_state])
 	emit_signal("state_changed", current_state)
 	
 	current_state.enter()
